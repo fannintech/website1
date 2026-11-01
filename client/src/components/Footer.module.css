@@ -1,0 +1,67 @@
+.footer {
+  background: var(--primary-dark);
+  color: rgb(255 255 255 / 0.82);
+  padding: 3.5rem 0 1.5rem;
+}
+
+.grid {
+  display: grid;
+  gap: 2rem;
+}
+
+.logoWrap {
+  display: inline-block;
+  background: #fff;
+  border-radius: 10px;
+  padding: 0.55rem 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.blurb {
+  max-width: 320px;
+  font-size: 0.95rem;
+}
+
+.footer h2 {
+  color: #fff;
+  font-size: 0.82rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 0.9rem;
+}
+
+.footer ul {
+  list-style: none;
+  display: grid;
+  gap: 0.5rem;
+}
+
+.footer a:hover {
+  color: #fff;
+}
+
+.contact {
+  color: rgb(255 255 255 / 0.7);
+  font-size: 0.95rem;
+}
+
+.bottom {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-top: 2.5rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid rgb(255 255 255 / 0.12);
+  font-size: 0.9rem;
+}
+
+@media (min-width: 800px) {
+  .grid {
+    grid-template-columns: 1.4fr 0.8fr 1fr 1fr;
+  }
+
+  .bottom {
+    flex-direction: row;
+    justify-content: space-between;
+  }
+}

@@ -1,56 +1,120 @@
 # Fannin Technologies Website
 
-Professional marketing site for **Fannin Technologies**, a Managed Service Provider serving small and medium-sized businesses.
+Concise managed IT website for Fannin Technologies. The frontend is a Vite + React single-page app. The backend is an Express API that stores contact form submissions in MongoDB.
 
-## Brand foundation
+## Important: IONOS Deploy Now
 
-- Logo source of truth: `public/logos/fannin-technologies-logo.png`
-- Extracted colors:
-  - Primary blue: `#397EDB`
-  - Primary dark / navy: `#112133`
-  - Logo muted gray: `#9CA4AE` (UI muted text darkened to `#5C6B7A` for WCAG AA)
-- Typography:
-  - Headings: **Plus Jakarta Sans**
-  - Body: **Source Sans 3**
+IONOS Deploy Now **does not run Node.js at runtime**. It builds the React app and deploys the static files.
 
-## Stack
+| Piece | Where it runs |
+| --- | --- |
+| React frontend | IONOS Deploy Now (static `client/dist`) |
+| Express API + MongoDB | A Node.js host (IONOS VPS / Cloud Server, or another Node host) plus MongoDB Atlas or a self-hosted MongoDB instance |
 
-- Next.js (App Router)
-- React + TypeScript
-- Tailwind CSS v4
-- Framer Motion
-- Lucide React
-- React Hook Form + Zod
+Do not expect the contact form API to run on Deploy Now itself.
 
-## Getting started
+## Local setup
+
+### Requirements
+
+- Node.js 20+
+- MongoDB (local or [MongoDB Atlas](https://www.mongodb.com/atlas))
+
+### 1. Install
 
 ```bash
-npm install
-cp .env.example .env.local
-npm run dev
+npm run install:all
 ```
 
-Open [http://localhost:3000](http://localhost:3000).
+### 2. Environment files
 
-## Environment variables
+Copy the examples:
 
-See `.env.example` for:
+```bash
+cp .env.example .env
+cp client/.env.example client/.env
+```
 
-- `NEXT_PUBLIC_SITE_URL`
-- Contact placeholders
-- Optional analytics IDs
-- Optional contact webhook / email integration
-- Form rate-limit settings
+Set at least:
 
-## Scripts
+```env
+MONGODB_URI=mongodb://127.0.0.1:27017/fannin-technologies
+FRONTEND_URL=http://localhost:5173
+```
 
-- `npm run dev` — local development
-- `npm run build` — production build
-- `npm run start` — serve production build
-- `npm run lint` — ESLint
+Leave `CONTACT_EMAIL`, `CONTACT_PHONE`, and `CONTACT_ADDRESS` blank until they are verified.
 
-## Architecture notes
+### 3. Start the apps
 
-- Customer portal is not built yet; route namespaces and component boundaries leave room for future `/portal` features.
-- Location pages under `/locations/[slug]` are placeholders for verified local SEO content.
-- Forms validate client-side and server-side, include a honeypot, and apply basic in-memory rate limiting.
+In one terminal:
+
+```bash
+npm run dev:server
+```
+
+In another:
+
+```bash
+npm run dev:client
+```
+
+- Frontend: http://localhost:5173
+- API health: http://localhost:5000/api/health
+
+The Vite dev server proxies `/api` to the Express backend.
+
+## MongoDB
+
+Local:
+
+```bash
+# Windows with MongoDB installed as a service is enough.
+# Or use Atlas and paste the connection string into MONGODB_URI.
+```
+
+Atlas:
+
+1. Create a free cluster.
+2. Add a database user.
+3. Allow the backend host IP (or `0.0.0.0/0` only if you accept that risk).
+4. Use the connection string as `MONGODB_URI`.
+
+## Contact form
+
+`POST /api/contact` accepts:
+
+- name, company, email, subject, message (required)
+- phone (optional)
+- website (honeypot; must stay empty)
+
+The API validates input, applies basic rate limiting, sanitizes fields, and stores a `Contact` document.
+
+## GitHub + IONOS Deploy Now
+
+1. Push this repository to GitHub.
+2. In IONOS, create a Deploy Now project and connect the repo.
+3. Use these build settings:
+   - **Build command:** `npm run build`
+   - **Dist folder:** `client/dist`
+   - **Node:** 20
+4. Add a production frontend env var for the live API:
+   - `VITE_API_URL=https://your-api-host.example`
+5. Deploy Now generates `.github/workflows/deploy-now.yaml` on first connect.
+6. Host the Express server separately and set:
+   - `MONGODB_URI`
+   - `FRONTEND_URL` to the Deploy Now site URL
+   - `PORT`
+
+SPA routing: `client/public/.htaccess` is copied into the build so `/privacy` refreshes do not 404 on Apache.
+
+## Brand
+
+Official logo: `client/public/assets/fannin-technologies-logo-alt.png`
+
+Colors taken from the logo:
+
+- Navy: `#0b1b2b`
+- Blue: `#1f6fe5`
+- Gray: `#8b93a1`
+
+Typography: Plus Jakarta Sans (headings) and Source Sans 3 (body).

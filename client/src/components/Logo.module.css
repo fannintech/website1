@@ -1,0 +1,15 @@
+.logo {
+  display: inline-flex;
+  align-items: center;
+}
+
+.logo img {
+  width: auto;
+  height: 46px;
+}
+
+@media (min-width: 768px) {
+  .logo img {
+    height: 52px;
+  }
+}

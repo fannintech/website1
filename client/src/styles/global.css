@@ -1,0 +1,136 @@
+:root {
+  --primary: #1f6fe5;
+  --primary-dark: #0b1b2b;
+  --primary-light: #3d8af0;
+  --navy: #0b1b2b;
+  --muted: #5d6b7a;
+  --gray: #8b93a1;
+  --background: #ffffff;
+  --surface: #f4f7fb;
+  --border: #dbe3ee;
+  --text: #0b1b2b;
+  --success: #0d7a6f;
+  --error: #c0392b;
+  --radius: 12px;
+  --shadow: 0 8px 24px rgb(11 27 43 / 0.08);
+  --header-height: 76px;
+  --max-width: 1120px;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+body {
+  font-family: "Source Sans 3", system-ui, sans-serif;
+  color: var(--text);
+  background: var(--background);
+  line-height: 1.6;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: "Plus Jakarta Sans", system-ui, sans-serif;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  color: var(--primary-dark);
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+.skip-link {
+  position: absolute;
+  left: 1rem;
+  top: -80px;
+  z-index: 100;
+  background: var(--primary-dark);
+  color: #fff;
+  padding: 0.7rem 1rem;
+  border-radius: 8px;
+}
+
+.skip-link:focus {
+  top: 1rem;
+}
+
+.container {
+  width: min(var(--max-width), calc(100% - 2rem));
+  margin-inline: auto;
+}
+
+.section {
+  padding: clamp(4rem, 8vw, 6rem) 0;
+  scroll-margin-top: 88px;
+}
+
+#home {
+  scroll-margin-top: 88px;
+}
+
+.section-intro {
+  max-width: 640px;
+  margin-bottom: 2.5rem;
+}
+
+.section-intro h2 {
+  font-size: clamp(1.8rem, 3vw, 2.4rem);
+  margin-bottom: 0.75rem;
+}
+
+.section-intro p {
+  color: var(--muted);
+  font-size: 1.05rem;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}

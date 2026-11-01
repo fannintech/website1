@@ -1,0 +1,15 @@
+# IONOS Deploy Now hint file.
+# Deploy Now hosts the React frontend as a static site.
+# The Express API is not run on Deploy Now (no Node.js runtime).
+#
+# Recommended wizard settings:
+#   Language: Javascript
+#   Build command: npm run build
+#   Dist folder: client/dist
+#
+# After connecting the GitHub repo, set VITE_API_URL in the
+# Deploy Now / GitHub Actions build environment to your live API URL.
+version: 0.1
+build:
+  command: npm run build
+dist: client/dist

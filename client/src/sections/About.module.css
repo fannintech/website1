@@ -1,0 +1,36 @@
+.section {
+  background: var(--surface);
+}
+
+.values {
+  display: grid;
+  gap: 1rem;
+}
+
+.card {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.35rem;
+}
+
+.card svg {
+  color: var(--primary);
+  margin-bottom: 0.75rem;
+}
+
+.card h3 {
+  font-size: 1.05rem;
+  margin-bottom: 0.4rem;
+}
+
+.card p {
+  color: var(--muted);
+  font-size: 0.96rem;
+}
+
+@media (min-width: 800px) {
+  .values {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
