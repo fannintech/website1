@@ -1,0 +1,5 @@
+# Static Vite/React site — no PHP runtime commands required.
+bootstrap:
+  excludes: []
+recurring:
+  excludes: []

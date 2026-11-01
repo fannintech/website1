@@ -40,17 +40,6 @@ jobs:
           npm install
           npm run build
 
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: v22.x
-
-      - name: Build Node assets
-        env:
-          CI: true
-          SITE_URL: ${{ inputs.site-url }}
-        run: npm install
-
 # Please do not touch the following action
       - name: Store deployment content
         uses: ionos-deploy-now/artifact-action@v1
