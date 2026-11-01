@@ -1,16 +1,9 @@
-# Build steps can be customized in the website1-build.yaml.
-# More information under https://docs.ionos.space/docs/github-actions-customization/
-# version: 2022-07-21
-#
-# This file now also deploys from the user push. GitHub was blocking
-# ionos-deploy-now[bot] workflow_dispatch with action_required.
-
 name: "Deploy Now: Orchestration"
 run-name: "Deploy Now: Build website1 · ${{ github.event.head_commit.message || format('Triggered by {0}', github.triggering_actor) }}"
 
 on:
-  - push
-  - workflow_dispatch
+  push:
+  workflow_dispatch:
 
 jobs:
   retrieve-project:
@@ -72,32 +65,105 @@ jobs:
           PY
           echo "ids=$(cat /tmp/ionos-deployment-ids.txt)" >> "$GITHUB_OUTPUT"
 
-  trigger-ionos-record:
-    name: trigger deployment
+  deploy:
+    name: deploy to IONOS
     needs:
       - retrieve-project
-      - build
+      - resolve-deployments
     runs-on: ubuntu-latest
+    permissions:
+      actions: read
+    strategy:
+      matrix:
+        deployment-id: ${{ fromJson(needs.resolve-deployments.outputs.deployment-ids) }}
     steps:
-      - name: Dispatch deployment(s)
+      - name: Update deployment status
         uses: ionos-deploy-now/project-action@v1
         with:
           api-key: ${{ secrets.IONOS_API_KEY }}
           service-host: api-us.ionos.space
           project-id: 126e2dc0-4a04-4e3e-a934-08c74a8de071
           branch-id: ${{ needs.retrieve-project.outputs.branch-id }}
-          action: dispatch-deployments
+          deployment-id: ${{ matrix.deployment-id }}
+          action: update-status
+          status: in_progress
 
-  deploy:
-    name: deploy to IONOS
+      - name: Retrieve stored deployment
+        uses: ionos-deploy-now/artifact-action@v1
+        with:
+          api-key: ${{ secrets.IONOS_API_KEY }}
+          service-host: api-us.ionos.space
+          project-id: 126e2dc0-4a04-4e3e-a934-08c74a8de071
+          branch-id: ${{ needs.retrieve-project.outputs.branch-id }}
+          version: ${{ github.sha }}
+          action: download
+
+      - name: Fetch deployment info
+        uses: ionos-deploy-now/project-action@v1
+        id: deployment
+        with:
+          api-key: ${{ secrets.IONOS_API_KEY }}
+          service-host: api-us.ionos.space
+          project-id: 126e2dc0-4a04-4e3e-a934-08c74a8de071
+          branch-id: ${{ needs.retrieve-project.outputs.branch-id }}
+          deployment-id: ${{ matrix.deployment-id }}
+          action: retrieve-info
+
+      - name: Render templates
+        uses: ionos-deploy-now/template-renderer-action@v2
+        with:
+          deployment-id: ${{ matrix.deployment-id }}
+          data: "[${{ steps.deployment.outputs.template-variables }}, ${{ toJson(secrets) }}]"
+          input-directory: deployment
+          output-directory: deployment
+          intermediate-data-file: deployment/.template-renderer-data
+
+      - name: Render real site-url to all files
+        run: |
+          for file in `grep -rl 'https://IONOS_DEPLOY_NOW_SITE_URL' .`; do
+            sed -i $file -e 's|https://IONOS_DEPLOY_NOW_SITE_URL|${{ fromJson(steps.deployment.outputs.info).site-url }}|g'
+          done
+
+      - name: Render SSH user secret name
+        run: echo SSH_USERNAME_SECRET=IONOS_DEPLOYMENT_`echo ${{ matrix.deployment-id }} | tr '[:lower:]' '[:upper:]' | tr '-' '_'`_SSH_USERNAME >> $GITHUB_ENV
+
+      - name: Deploy to IONOS
+        uses: ionos-deploy-now/deploy-to-ionos-action@v2
+        with:
+          api-key: ${{ secrets.IONOS_API_KEY }}
+          service-host: api-us.ionos.space
+          project-id: 126e2dc0-4a04-4e3e-a934-08c74a8de071
+          branch-id: ${{ needs.retrieve-project.outputs.branch-id }}
+          deployment-id: ${{ matrix.deployment-id }}
+          deployment-info: ${{ steps.deployment.outputs.info }}
+          ssh-user: ${{ secrets[env.SSH_USERNAME_SECRET] }}
+          ssh-key: ${{ secrets.IONOS_SSH_KEY }}
+
+      - name: Update deployment status
+        if: ${{ always() }}
+        uses: ionos-deploy-now/project-action@v1
+        with:
+          api-key: ${{ secrets.IONOS_API_KEY }}
+          service-host: api-us.ionos.space
+          project-id: 126e2dc0-4a04-4e3e-a934-08c74a8de071
+          branch-id: ${{ needs.retrieve-project.outputs.branch-id }}
+          deployment-id: ${{ matrix.deployment-id }}
+          action: update-status
+          status: ${{ job.status }}
+
+  notify-deployment-finished:
+    name: finish IONOS status
     needs:
       - retrieve-project
-      - build
-      - resolve-deployments
-    uses: ./.github/workflows/deploy-to-ionos.yaml
-    with:
-      version: ${{ github.sha }}
-      project-id: 126e2dc0-4a04-4e3e-a934-08c74a8de071
-      branch-id: ${{ needs.retrieve-project.outputs.branch-id }}
-      deployment-ids: ${{ needs.resolve-deployments.outputs.deployment-ids }}
-    secrets: inherit
+      - deploy
+    if: ${{ always() }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Notify all deployments finished
+        uses: ionos-deploy-now/project-action@v1
+        with:
+          api-key: ${{ secrets.IONOS_API_KEY }}
+          service-host: api-us.ionos.space
+          project-id: 126e2dc0-4a04-4e3e-a934-08c74a8de071
+          branch-id: ${{ needs.retrieve-project.outputs.branch-id }}
+          action: set-deployments-finished
