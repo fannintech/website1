@@ -26,8 +26,8 @@ export default function Privacy() {
         </p>
         <h2>Questions</h2>
         <p>
-          Use the contact form on the homepage for privacy questions until
-          verified contact details are published.
+          Use the contact form for privacy questions until verified contact
+          details are published.
         </p>
       </div>
     </section>

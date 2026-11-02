@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import {
   Cloud,
   DatabaseBackup,
@@ -14,6 +15,7 @@ const services = [
     description:
       "Proactive IT monitoring, maintenance, troubleshooting, and ongoing technology support.",
     icon: Headset,
+    to: "/managed-it",
   },
   {
     title: "Cybersecurity",
@@ -47,26 +49,42 @@ const services = [
   },
 ];
 
-export default function Services() {
+export default function Services({ hideIntro = false }) {
   return (
-    <section id="services" className="section">
+    <section className="section">
       <div className="container">
-        <div className="section-intro">
-          <h2>IT Services Designed Around Your Business</h2>
-          <p>
-            Practical support and security for the systems your team depends on every day.
-          </p>
-        </div>
+        {hideIntro ? null : (
+          <div className="section-intro">
+            <h2>IT Services Designed Around Your Business</h2>
+            <p>
+              Practical support and security for the systems your team depends on every day.
+            </p>
+          </div>
+        )}
         <div className={styles.grid}>
           {services.map((service) => {
             const Icon = service.icon;
-            return (
-              <article key={service.title} className={styles.card}>
+            const body = (
+              <>
                 <div className={styles.icon} aria-hidden="true">
                   <Icon size={22} />
                 </div>
                 <h3>{service.title}</h3>
                 <p>{service.description}</p>
+              </>
+            );
+
+            if (service.to) {
+              return (
+                <Link key={service.title} to={service.to} className={styles.card}>
+                  {body}
+                </Link>
+              );
+            }
+
+            return (
+              <article key={service.title} className={styles.card}>
+                {body}
               </article>
             );
           })}

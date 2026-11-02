@@ -3,14 +3,8 @@ import { NavLink, useLocation } from "react-router-dom";
 import { Menu, X } from "lucide-react";
 import Logo from "./Logo.jsx";
 import Button from "./Button.jsx";
+import { mainNav } from "../data/navigation.js";
 import styles from "./Header.module.css";
-
-const links = [
-  { label: "Home", href: "/#home" },
-  { label: "Services", href: "/#services" },
-  { label: "About", href: "/#about" },
-  { label: "Contact", href: "/#contact" },
-];
 
 export default function Header() {
   const [open, setOpen] = useState(false);
@@ -40,14 +34,21 @@ export default function Header() {
       <div className={`container ${styles.bar}`}>
         <Logo />
         <nav className={styles.desktop} aria-label="Primary">
-          {links.map((link) => (
-            <NavLink key={link.href} to={link.href} className={styles.link}>
+          {mainNav.map((link) => (
+            <NavLink
+              key={link.to}
+              to={link.to}
+              end={link.to === "/"}
+              className={({ isActive }) =>
+                `${styles.link} ${isActive ? styles.active : ""}`
+              }
+            >
               {link.label}
             </NavLink>
           ))}
         </nav>
         <div className={styles.actions}>
-          <Button href="/#contact">Get in Touch</Button>
+          <Button to="/contact">Get in Touch</Button>
           <button
             type="button"
             className={styles.menuButton}
@@ -61,17 +62,20 @@ export default function Header() {
       </div>
       {open ? (
         <nav className={styles.mobile} aria-label="Mobile">
-          {links.map((link) => (
+          {mainNav.map((link) => (
             <NavLink
-              key={link.href}
-              to={link.href}
-              className={styles.mobileLink}
+              key={link.to}
+              to={link.to}
+              end={link.to === "/"}
+              className={({ isActive }) =>
+                `${styles.mobileLink} ${isActive ? styles.active : ""}`
+              }
               onClick={() => setOpen(false)}
             >
               {link.label}
             </NavLink>
           ))}
-          <Button href="/#contact" onClick={() => setOpen(false)}>
+          <Button to="/contact" onClick={() => setOpen(false)}>
             Get in Touch
           </Button>
         </nav>

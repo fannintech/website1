@@ -3,7 +3,7 @@ import styles from "./Hero.module.css";
 
 export default function Hero() {
   return (
-    <section id="home" className={styles.hero}>
+    <section className={styles.hero}>
       <div className={styles.backdrop} aria-hidden="true" />
       <div className={`container ${styles.content}`}>
         <p className={styles.eyebrow}>Fannin Technologies</p>
@@ -14,9 +14,9 @@ export default function Hero() {
           efficiently, securely, and confidently.
         </p>
         <div className={styles.actions}>
-          <Button href="#contact">Contact Us</Button>
-          <Button href="#services" variant="secondary">
-            Explore Our Services
+          <Button to="/contact">Contact Us</Button>
+          <Button to="/it-services" variant="secondary">
+            Explore IT Services
           </Button>
         </div>
       </div>

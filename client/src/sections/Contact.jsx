@@ -77,14 +77,13 @@ export default function Contact() {
   };
 
   return (
-    <section id="contact" className="section">
+    <section className="section">
       <div className={`container ${styles.layout}`}>
         <div>
-          <h2>IT that works.</h2>
+          <h2>Send a message</h2>
           <p className={styles.lead}>
-            Whether you're looking for ongoing IT support or help improving your
-            existing technology infrastructure, Fannin Technologies is ready to
-            start the conversation.
+            Share a few details and we will follow up. Do not include passwords
+            or other sensitive credentials in your message.
           </p>
         </div>
         <form className={styles.form} onSubmit={onSubmit} noValidate>

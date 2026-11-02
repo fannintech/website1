@@ -1,23 +1,8 @@
 import { Link } from "react-router-dom";
 import Logo from "./Logo.jsx";
 import { company } from "../config.js";
+import { footerOfferings, mainNav } from "../data/navigation.js";
 import styles from "./Footer.module.css";
-
-const navLinks = [
-  { label: "Home", href: "/#home" },
-  { label: "Services", href: "/#services" },
-  { label: "About", href: "/#about" },
-  { label: "Contact", href: "/#contact" },
-];
-
-const serviceLinks = [
-  { label: "Managed IT Services", href: "/#services" },
-  { label: "Cybersecurity", href: "/#services" },
-  { label: "Cloud Solutions", href: "/#services" },
-  { label: "Network Management", href: "/#services" },
-  { label: "IT Consulting", href: "/#services" },
-  { label: "Backup & Disaster Recovery", href: "/#services" },
-];
 
 export default function Footer() {
   return (
@@ -35,19 +20,19 @@ export default function Footer() {
         <div>
           <h2>Company</h2>
           <ul>
-            {navLinks.map((link) => (
-              <li key={link.label}>
-                <Link to={link.href}>{link.label}</Link>
+            {mainNav.map((link) => (
+              <li key={link.to}>
+                <Link to={link.to}>{link.label}</Link>
               </li>
             ))}
           </ul>
         </div>
         <div>
-          <h2>Services</h2>
+          <h2>Offerings</h2>
           <ul>
-            {serviceLinks.map((link) => (
+            {footerOfferings.map((link) => (
               <li key={link.label}>
-                <Link to={link.href}>{link.label}</Link>
+                <Link to={link.to}>{link.label}</Link>
               </li>
             ))}
           </ul>
@@ -59,7 +44,9 @@ export default function Footer() {
             {company.phone ? <li>{company.phone}</li> : null}
             {company.address ? <li>{company.address}</li> : null}
             {!company.email && !company.phone && !company.address ? (
-              <li>Contact details can be added through environment configuration.</li>
+              <li>
+                <Link to="/contact">Use the contact form to get in touch.</Link>
+              </li>
             ) : null}
           </ul>
         </div>
